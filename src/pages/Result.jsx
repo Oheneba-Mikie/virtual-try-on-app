@@ -9,53 +9,124 @@ const Result = () => {
     if (!resultImage) {
         return (
             <Layout>
-                <div className="container text-center mt-md">
-                    <h2>No Result Found</h2>
-                    <p>Please try generating a new image.</p>
-                    <Link to="/try-on" className="btn btn-primary mt-md">Go to Try-On</Link>
+                <div className="container mt-lg text-center">
+                    <div className="error-state glass-panel">
+                        <h2>No Result Found</h2>
+                        <p>Please go back and try generating an image first.</p>
+                        <Link to="/try-on" className="btn btn-primary mt-md">
+                            Go to Try-On
+                        </Link>
+                    </div>
                 </div>
+                <style>{`
+                    .error-state {
+                        padding: 4rem 2rem;
+                        border-radius: var(--radius-lg);
+                        max-width: 600px;
+                        margin: 0 auto;
+                    }
+                `}</style>
             </Layout>
         );
     }
 
     return (
         <Layout>
-            <div className="container mt-md mb-md text-center">
-                <h2 className="mb-md">Your New Look</h2>
-
-                <div className="result-container">
-                    <img src={resultImage} alt="Virtual Try-On Result" className="result-img" />
+            <div className="container mt-lg mb-lg">
+                <div className="result-header text-center animate-slide-up">
+                    <h1 className="section-title">Your New Look</h1>
+                    <p className="section-subtitle">Here is your AI-generated virtual try-on result.</p>
                 </div>
 
-                <div className="actions mt-md">
-                    <Link to="/try-on" className="btn btn-secondary">Try Another Outfit</Link>
-                    <a href={resultImage} download="my-new-look.jpg" className="btn btn-primary" style={{ marginLeft: '1rem' }}>
-                        Download Image
-                    </a>
+                <div className="result-content animate-fade-in">
+                    <div className="result-frame glass-panel">
+                        <img src={resultImage} alt="Virtual Try-On Result" className="result-img" />
+                        <div className="frame-shine"></div>
+                    </div>
+
+                    <div className="result-actions animate-slide-up">
+                        <a
+                            href={resultImage}
+                            download="virtual-try-on-result.png"
+                            className="btn btn-primary btn-lg action-btn"
+                        >
+                            Download Image
+                        </a>
+                        <Link to="/try-on" className="btn btn-secondary btn-lg action-btn">
+                            Try Another Outfit
+                        </Link>
+                    </div>
                 </div>
             </div>
 
             <style>{`
-        .result-container {
+        .result-content {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          margin-top: 3rem;
+        }
+
+        .result-frame {
+          padding: 1.5rem;
+          border-radius: var(--radius-lg);
+          position: relative;
+          overflow: hidden;
           max-width: 600px;
-          margin: 0 auto;
-          padding: var(--spacing-sm);
-          background: var(--color-surface);
-          border-radius: var(--radius-md);
-          box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+          width: 100%;
+          box-shadow: var(--shadow-2xl);
+          margin-bottom: 3rem;
         }
 
         .result-img {
           width: 100%;
-          border-radius: var(--radius-sm);
+          height: auto;
+          border-radius: var(--radius-md);
           display: block;
         }
 
-        .actions {
+        .frame-shine {
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 50%;
+          height: 100%;
+          background: linear-gradient(
+            to right,
+            rgba(255, 255, 255, 0) 0%,
+            rgba(255, 255, 255, 0.1) 50%,
+            rgba(255, 255, 255, 0) 100%
+          );
+          transform: skewX(-25deg);
+          animation: shine 6s infinite;
+        }
+
+        @keyframes shine {
+          0% { left: -100%; }
+          20% { left: 200%; }
+          100% { left: 200%; }
+        }
+
+        .result-actions {
           display: flex;
-          justify-content: center;
-          gap: var(--spacing-sm);
+          gap: 1.5rem;
           flex-wrap: wrap;
+          justify-content: center;
+        }
+
+        .action-btn {
+          min-width: 200px;
+        }
+
+        @media (max-width: 600px) {
+          .result-actions {
+            flex-direction: column;
+            width: 100%;
+          }
+          
+          .action-btn {
+            width: 100%;
+          }
         }
       `}</style>
         </Layout>
