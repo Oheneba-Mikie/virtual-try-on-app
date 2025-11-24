@@ -1,42 +1,68 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import '../styles/index.css';
 
 const Layout = ({ children }) => {
-    const location = useLocation();
-    const isHome = location.pathname === '/';
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { user, signOut } = useAuth();
+  const isHome = location.pathname === '/';
+  const [menuOpen, setMenuOpen] = useState(false);
 
-    return (
-        <div className="app-layout">
-            <header className={`header ${isHome ? 'header-transparent' : 'header-glass'}`}>
-                <div className="container header-content">
-                    <Link to="/" className="logo">
-                        VIRTUAL<span className="logo-accent">TRY</span>ON
-                    </Link>
-                    <nav className="nav">
-                        <Link to="/" className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}>Home</Link>
-                        <Link to="/try-on" className="btn btn-primary nav-cta">Try On Now</Link>
-                    </nav>
-                </div>
-            </header>
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/login');
+  };
 
-            <main className="main-content">
-                {children}
-            </main>
+  return (
+    <div className="app-layout">
+      <header className={`header ${isHome ? 'header-transparent' : 'header-glass'}`}>
+        <div className="container header-content">
+          <Link to="/" className="logo">
+            VIRTUAL<span className="logo-accent">TRY</span>ON
+          </Link>
 
-            <footer className="footer">
-                <div className="container footer-content">
-                    <div className="footer-brand">
-                        <h3>VirtualTryOn</h3>
-                        <p>Experience the future of fashion with our AI-powered fitting room.</p>
-                    </div>
-                    <div className="footer-links">
-                        <p>&copy; {new Date().getFullYear()} All rights reserved.</p>
-                    </div>
-                </div>
-            </footer>
+          <nav className={`nav ${menuOpen ? 'nav-open' : ''}`}>
+            <Link to="/" className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}>Home</Link>
 
-            <style>{`
+            {user ? (
+              <>
+                <span className="user-email">{user.email}</span>
+                <button onClick={handleSignOut} className="btn btn-secondary nav-btn">Sign Out</button>
+                <Link to="/try-on" className="btn btn-primary nav-cta">Try On Now</Link>
+              </>
+            ) : (
+              <>
+                <Link to="/login" className="nav-link">Log In</Link>
+                <Link to="/signup" className="btn btn-primary nav-cta">Sign Up</Link>
+              </>
+            )}
+          </nav>
+
+          <button className="mobile-menu-btn" onClick={() => setMenuOpen(!menuOpen)}>
+            ☰
+          </button>
+        </div>
+      </header>
+
+      <main className="main-content">
+        {children}
+      </main>
+
+      <footer className="footer">
+        <div className="container footer-content">
+          <div className="footer-brand">
+            <h3>VirtualTryOn</h3>
+            <p>Experience the future of fashion with our AI-powered fitting room.</p>
+          </div>
+          <div className="footer-links">
+            <p>&copy; {new Date().getFullYear()} All rights reserved.</p>
+          </div>
+        </div>
+      </footer>
+
+      <style>{`
         .app-layout {
           display: flex;
           flex-direction: column;
@@ -76,6 +102,7 @@ const Layout = ({ children }) => {
           font-weight: 800;
           letter-spacing: -0.05em;
           color: var(--color-text-main);
+          z-index: 101;
         }
 
         .logo-accent {
@@ -92,6 +119,7 @@ const Layout = ({ children }) => {
           font-weight: 500;
           color: var(--color-text-muted);
           position: relative;
+          cursor: pointer;
         }
 
         .nav-link:hover, .nav-link.active {
@@ -116,6 +144,26 @@ const Layout = ({ children }) => {
         .nav-cta {
           padding: 0.6rem 1.2rem;
           font-size: 0.9rem;
+        }
+
+        .nav-btn {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+
+        .user-email {
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 101;
         }
 
         .main-content {
@@ -155,9 +203,32 @@ const Layout = ({ children }) => {
           font-size: 0.85rem;
           color: var(--color-text-muted);
         }
+
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .nav {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 70%;
+                height: 100vh;
+                background: var(--color-surface);
+                flex-direction: column;
+                padding: 6rem 2rem;
+                transition: right 0.3s ease;
+                box-shadow: var(--shadow-lg);
+            }
+
+            .nav-open {
+                right: 0;
+            }
+        }
       `}</style>
-        </div>
-    );
+    </div>
+  );
 };
 
 export default Layout;

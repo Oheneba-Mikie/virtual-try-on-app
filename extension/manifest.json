@@ -1,0 +1,41 @@
+{
+    "manifest_version": 3,
+    "name": "Virtual Try-On for AliExpress & Jumia",
+    "version": "1.0",
+    "description": "Virtually try on clothes from AliExpress and Jumia using your own photo.",
+    "permissions": [
+        "storage",
+        "activeTab",
+        "scripting"
+    ],
+    "host_permissions": [
+        "*://*.aliexpress.com/*",
+        "*://*.jumia.com/*",
+        "*://*.jumia.com.ng/*",
+        "*://*.jumia.co.ke/*",
+        "*://*.jumia.com.eg/*"
+    ],
+    "action": {
+        "default_popup": "popup.html"
+    },
+    "background": {
+        "service_worker": "background.js"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "*://*.aliexpress.com/*",
+                "*://*.jumia.com/*",
+                "*://*.jumia.com.ng/*",
+                "*://*.jumia.co.ke/*",
+                "*://*.jumia.com.eg/*"
+            ],
+            "js": [
+                "content.js"
+            ],
+            "css": [
+                "styles.css"
+            ]
+        }
+    ]
+}
